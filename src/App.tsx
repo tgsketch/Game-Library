@@ -1,22 +1,50 @@
-import ExpandableText from "./components/ExpandableText";
+import { useState } from "react";
+import ExpenseList from "./expense-tracker/components/ExpenseList";
+import ExpenseFilter from "./expense-tracker/components/ExpenseFilter";
+import ExpenseForm from "./expense-tracker/components/ExpenseForm";
+// import categories from "./expense-tracker/categories";
 
 function App() {
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  const [expenses, setExpenses] = useState([
+    { id: 1, description: "Milk", amount: 5, category: "Groceries" },
+    { id: 2, description: "Eggs", amount: 10, category: "Groceries" },
+    { id: 3, description: "Electricity", amount: 120, category: "Utilities" },
+    { id: 4, description: "Electricity", amount: 120, category: "Utilities" },
+    {
+      id: 5,
+      description: "Electricity",
+      amount: 120,
+      category: "Entertainment",
+    },
+  ]);
+
+  const visibleExpenses = selectedCategory
+    ? expenses.filter((e) => e.category === selectedCategory)
+    : expenses;
+
   return (
     <div>
-      <ExpandableText>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec luctus
-        vitae metus eu sagittis. Nullam ornare neque et libero tincidunt, at
-        malesuada lectus sodales. Sed molestie neque sem. Sed non ultricies est.
-        Nullam porta, nunc sed bibendum imperdiet, urna tortor posuere diam, ut
-        vulputate neque enim vel mauris. Pellentesque nec sapien a sapien
-        malesuada consectetur. Morbi in odio eros. Vestibulum varius semper
-        odio, vitae pellentesque purus sagittis vitae. Sed eget tellus lorem.
-        Nam tristique blandit nisl et vulputate. Ut pellentesque ex ultrices
-        magna scelerisque, id tristique quam aliquam. Nullam quis neque rhoncus,
-        iaculis nunc quis, eleifend est. Morbi sit amet justo elit. Quisque
-        condimentum lorem ut justo condimentum, semper elementum sem ultrices.
-        Donec ultricies convallis finibus.
-      </ExpandableText>
+      <div className="mb-3">
+        <div className="mb-5">
+          <ExpenseForm
+            onSubmit={(expense) =>
+              setExpenses([
+                ...expenses,
+                { ...expense, id: expenses.length + 1 },
+              ])
+            }
+          />
+        </div>
+        <ExpenseFilter
+          onSelectCategory={(category) => setSelectedCategory(category)}
+        />
+      </div>
+      <ExpenseList
+        onDelete={(id) => setExpenses(expenses.filter((e) => e.id !== id))}
+        expenses={visibleExpenses}
+      />
     </div>
   );
 }
